@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Leccion extends Model
 {
-    protected $fillable = ['titulo', 'contenido', 'orden', 'modulo_id'];
-    protected $table = 'leccions';
+    protected $fillable = ['titulo', 'contenido', 'video_url', 'orden', 'modulo_id'];
+    protected $table = 'lecciones';
 
     public function modulo()
     {

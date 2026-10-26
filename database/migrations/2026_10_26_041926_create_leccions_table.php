@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('leccions', function (Blueprint $table) {
+        Schema::create('lecciones', function (Blueprint $table) {
             $table->id();
             $table->string('titulo');
             $table->text('contenido')->nullable();
+            $table->string('video_url')->nullable();
             $table->integer('orden')->default(0);
             $table->foreignId('modulo_id')->constrained('modulos')->onDelete('cascade');
             $table->timestamps();
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('leccions');
+        Schema::dropIfExists('lecciones');
     }
 };

@@ -14,8 +14,8 @@ class Modulo extends Model
         return $this->belongsTo(Curso::class, 'curso_id');
     }
 
-    public function leccions()
+    public function lecciones()
     {
-        return $this->hasMany(Leccion::class, 'modulo_id');
+        return $this->hasMany(Leccion::class, 'modulo_id')->orderBy('orden');
     }
 }
