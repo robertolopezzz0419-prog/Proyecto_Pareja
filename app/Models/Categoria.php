@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Categoria extends Model
 {
     protected $fillable = ['nombre'];
-    protected $table = 'categories';
+    protected $table = 'categorias';
     public function cursos()
     {
-        return $this->hasMany(Curso::class, 'category_id');
+        return $this->hasMany(Curso::class, 'categoria_id');
     }
 }

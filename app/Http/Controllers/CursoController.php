@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Curso;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 
 class CursoController extends Controller
@@ -11,7 +12,7 @@ class CursoController extends Controller
      */
     public function index()
     {
-        $cursos = Curso::with('category')->get();
+        $cursos = Curso::with('categoria')->get();
         return view('cursos.index', compact('cursos'));
     }
 
@@ -20,8 +21,8 @@ class CursoController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
-        return view('cursos.create', compact('categories'));
+        $categorias = Categoria::all();
+        return view('cursos.create', compact('categorias'));
     }
 
     /**
@@ -46,7 +47,7 @@ class CursoController extends Controller
      */
     public function show(string $id)
     {
-        $curso = Curso::with('category', 'modulos.lecciones')->findOrFail($id);
+        $curso = Curso::with('categoria', 'modulos.lecciones')->findOrFail($id);
         return view('cursos.show', compact('curso'));
     }
 
