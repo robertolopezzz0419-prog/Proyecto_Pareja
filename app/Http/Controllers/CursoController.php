@@ -46,7 +46,8 @@ class CursoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $curso = Curso::with('category', 'modulos.lecciones')->findOrFail($id);
+        return view('cursos.show', compact('curso'));
     }
 
     /**
