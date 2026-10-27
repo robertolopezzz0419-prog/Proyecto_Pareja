@@ -69,7 +69,10 @@ class CursoController extends Controller
         $inscrito = auth()->check()
             && auth()->user()->cursosInscritos()->where('cursos.id', $curso->id)->exists();
 
-        return view('cursos.show', compact('curso', 'inscrito'));
+             
+        $puedeEntrar = $inscrito || (auth()->check() && auth()->user()->puedeGestionar());
+
+        return view('cursos.show', compact('curso', 'inscrito', 'puedeEntrar'));
     }
 
     /**

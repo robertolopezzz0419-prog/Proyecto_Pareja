@@ -13,7 +13,9 @@
     <div class="container pb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Lista de Cursos</h2>
-            <a href="{{ route('cursos.create') }}" class="btn btn-primary">Crear Curso</a>
+          @can('gestionar')
+                <a href="{{ route('cursos.create') }}" class="btn btn-primary">Crear Curso</a>
+            @endcan
         </div>
 
         
@@ -40,15 +42,17 @@
                             <a href="{{ route('cursos.show', $curso->id) }}" class="btn btn-outline-dark mt-auto mb-2">Ver Módulos y Lecciones</a>
 
                    
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('cursos.edit', $curso->id) }}" class="btn btn-sm btn-warning w-50">Editar</a>
-                                <form action="{{ route('cursos.destroy', $curso->id) }}" method="POST" class="w-50 m-0"
-                                      onsubmit="return confirm('¿Seguro que quieres eliminar este curso?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger w-100">Eliminar</button>
-                                </form>
-                            </div>
+                             @can('gestionar')
+                                <div class="d-flex gap-2">
+                                    <a href="{{ route('cursos.edit', $curso->id) }}" class="btn btn-sm btn-warning w-50">Editar</a>
+                                    <form action="{{ route('cursos.destroy', $curso->id) }}" method="POST" class="w-50 m-0"
+                                          onsubmit="return confirm('¿Seguro que quieres eliminar este curso?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger w-100">Eliminar</button>
+                                    </form>
+                                </div>
+                            @endcan
                         </div>
                     </div>
                 </div>

@@ -29,7 +29,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
+      public function puedeGestionar()
+    {
+        return $this->roles->whereIn('nombre', ['Admin', 'Profesor'])->count() > 0;
+    }
     public function roles()
     {
         return $this->belongsToMany(Rol::class, 'rol_usuario', 'user_id', 'rol_id');
