@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Curso;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CursoController extends Controller
 {
@@ -34,12 +35,17 @@ class CursoController extends Controller
             'titulo' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'precio' => 'required|numeric|min:0',
-            'category_id' => 'required|exists:categories,id',
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|max:2048',
+
         ]);
+        if ($request->hasFile('imagen')) {
+           $datos['imagen'] = $request->file('imagen')->store('cursos', 'public');
+        }
 
-        Curso::create($request->all());
+        Curso::create($datos);
 
-        return redirect()->route('cursos.index')->with('success', 'Curso creado exitosamente.');
+        return redirect()->route('cursos.index')->with('exito', 'Curso creado exitosamente.');
     }
 
     /**
@@ -56,7 +62,9 @@ class CursoController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $curso = Curso::findOrFail($id);
+        $categorias = Categoria::all();
+        return view('cursos.edit', compact('curso', 'categorias'));
     }
 
     /**
@@ -64,7 +72,22 @@ class CursoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $curso = Curso::findOrFail($id);
+        $datos = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'precio' => 'required|numeric|min:0',
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|max:2048',
+        ]);
+        if ($request->hasFile('imagen')) {
+            if($curso->imagen) {
+                Storage::disk('public')->delete($curso->imagen);
+            }
+            $datos['imagen'] = $request->file('imagen')->store('cursos', 'public');
+        }
+        $curso->update($datos);
+        return redirect()->route('cursos.show', $curso->id)->with('exito', 'Curso actualizado exitosamente.');
     }
 
     /**
@@ -72,6 +95,11 @@ class CursoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $curso = Curso::findOrFail($id);
+        if($curso->imagen) {
+            Storage::disk('public')->delete($curso->imagen);
+        }
+        $curso->delete();
+        return redirect()->route('cursos.index')->with('exito', 'Curso eliminado exitosamente.');
     }
 }

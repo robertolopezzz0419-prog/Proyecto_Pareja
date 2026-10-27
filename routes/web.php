@@ -9,4 +9,6 @@ Route::get('/', function () {
 });
 Route::resource('cursos', CursoController::class);
 Route::post('/modulos', [ModuloController::class, 'store'])->name('modulos.store');
-Route::post('/lecciones/{id}/completar', [LeccionController::class, 'alternarcompletada'])->name('lecciones.completar');
+Route::post('/lecciones', [LeccionController::class, 'store'])->name('lecciones.store');
+Route::get('/lecciones/{id}', [LeccionController::class, 'show'])-> name('lecciones.show');
+Route::post('/lecciones/{id}/completar', [LeccionController::class, 'alternarCompletada'])->name('lecciones.completar');

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Modulo;
 use Illuminate\Http\Request;
 
 class ModuloController extends Controller
@@ -14,7 +14,7 @@ class ModuloController extends Controller
             'curso_id' => 'required|exists:cursos,id',
         ]);
 
-        Modulo::create($request->all());
+        Modulo::create($datos);
 
-        return back()->with('success', 'Modulo creado exitosamente.');
+        return back()->with('exito', 'Modulo creado exitosamente.');
 }}
