@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelate('cascade');
             $table->foreignId('curso_id')->constrained('cursos')->onDelate('cascade');
+            $table->unsignedTinyInteger('calificacion');
             $table->text('comentario')->nullable();
             $table->timestamps();
         });
