@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Curso;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class CursoController extends Controller
 {
@@ -31,12 +31,12 @@ class CursoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+       $datos = $request->validate([
             'titulo' => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'precio' => 'required|numeric|min:0',
+            'precio' => ['required', 'numeric', 'min:0', 'max:999999.99', 'regex:/^\d+(\.\d{1,2})?$/'],
             'categoria_id' => 'required|exists:categorias,id',
-            'imagen' => 'nullable|image|max:2048',
+            'imagen' => 'nullable|image|max:10024',
 
         ]);
         if ($request->hasFile('imagen')) {
@@ -76,9 +76,11 @@ class CursoController extends Controller
         $datos = $request->validate([
             'titulo' => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'precio' => 'required|numeric|min:0',
+          'precio' => ['required', 'numeric', 'min:0', 'max:999999.99', 'regex:/^\d+(\.\d{1,2})?$/'],
             'categoria_id' => 'required|exists:categorias,id',
-            'imagen' => 'nullable|image|max:2048',
+            'imagen' => 'nullable|image|max:10024',
+        ], [  
+    'precio.regex' => 'El precio solo puede tener números y hasta 2 decimales.',
         ]);
         if ($request->hasFile('imagen')) {
             if($curso->imagen) {

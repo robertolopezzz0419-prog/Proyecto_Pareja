@@ -10,7 +10,7 @@ class CategoriaSeeder extends Seeder
      */
     public function run(): void
     {
-        $nombres = ['Programación', 'Diseño', 'Marketing', 'Idiomas'];
+        $nombres = ['Programación', 'Diseño', 'Marketing', 'Idiomas', 'matematicas'];
         foreach ($nombres as $nombre) {
             Categoria::firstOrCreate(['nombre' => $nombre]);
         }
