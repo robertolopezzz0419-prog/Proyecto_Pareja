@@ -27,13 +27,33 @@
                 <p class="text-muted">Categoria: {{ $curso->categoria->nombre ?? 'Sin categoria' }}</p>
                 <p>{{ $curso->descripcion }}</p>
                 <h4 class="text-success">${{ $curso->precio }}</h4>
+                <p class="text-muted">{{ $curso->estudiantes->count() }} estudiantes inscritos</p>
+
+                @if($inscrito)
+                    <form action="{{ route('inscripciones.destroy', $curso->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-outline-danger">Salirme del curso</button>
+                    </form>
+                @else
+                    <form action="{{ route('inscripciones.store', $curso->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button class="btn btn-success">Inscribirme a este curso</button>
+                    </form>
+                @endif
             </div>
         </div>
 
         @if(session('exito'))
             <div class="alert alert-success">{{ session('exito') }}</div>
         @endif
-
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+    
         
         @if($errors->any())
             <div class="alert alert-danger">
@@ -141,6 +161,52 @@
                 <button type="submit" class="btn btn-primary">Guardar Modulo</button>
             </form>
         </div>
+
+       
+        <h3 class="mt-5 mb-3">Reseñas</h3>
+
+        @if($curso->resenas->count() > 0)
+            <p class="fs-5">
+                Promedio: <strong>{{ number_format($curso->resenas->avg('calificacion'), 1) }}</strong> / 5
+                <span class="text-warning">{{ str_repeat('★', (int) round($curso->resenas->avg('calificacion'))) }}</span>
+                <small class="text-muted">({{ $curso->resenas->count() }} reseñas)</small>
+            </p>
+        @endif
+
+        @forelse($curso->resenas as $resena)
+            <div class="card mb-2 shadow-sm">
+                <div class="card-body">
+                    <strong>{{ $resena->user->name }}</strong>
+                    <span class="text-warning">{{ str_repeat('★', $resena->calificacion) }}{{ str_repeat('☆', 5 - $resena->calificacion) }}</span>
+                    <p class="mb-0">{{ $resena->comentario }}</p>
+                </div>
+            </div>
+        @empty
+            <p class="text-muted">Aún no hay reseñas.</p>
+        @endforelse
+
+        @if($inscrito && !$curso->resenas->where('user_id', auth()->id())->count())
+            <div class="card mt-3 p-3 shadow-sm">
+                <h5>Deja tu reseña</h5>
+                <form action="{{ route('resenas.store', $curso->id) }}" method="POST">
+                    @csrf
+                    <div class="mb-2">
+                        <label class="form-label">Calificación</label>
+                        <select name="calificacion" class="form-select" required>
+                            <option value="5">5 estrellas</option>
+                            <option value="4">4 estrellas</option>
+                            <option value="3">3 estrellas</option>
+                            <option value="2">2 estrellas</option>
+                            <option value="1">1 estrella</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <textarea name="comentario" class="form-control" rows="3" maxlength="1000" placeholder="Tu comentario (máx. 1000 caracteres)"></textarea>
+                    </div>
+                    <button class="btn btn-primary">Enviar reseña</button>
+                </form>
+            </div>
+        @endif
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

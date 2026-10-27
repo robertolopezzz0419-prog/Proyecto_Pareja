@@ -12,18 +12,41 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('cursos.create') }}">Crear Curso</a>
                 </li>
+                @auth
+    @if(auth()->user()->roles->whereIn('nombre', ['Admin', 'Profesor'])->count() > 0)
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('categorias.create') }}">Crear Categoría</a>
+        </li>
+    @endif
+@endauthw
             </ul>
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-muted disabled" href="#">Mis Inscripciones (Compañero)</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-warning" href="#" onclick="alert('Modulo del roberto'); return false;">Iniciar Sesión</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-info" href="#" onclick="alert('Modulo del roberto'); return false;">Registrarse</a>
-                </li>
-            </ul>
+    @guest
+        <li class="nav-item">
+            <a class="nav-link text-warning" href="{{ route('login') }}">Iniciar Sesión</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-info" href="{{ route('registro') }}">Registrarse</a>
+        </li>
+    @endguest
+
+    @auth
+    <li class="nav-item">
+    <span class="navbar-text text-white me-3">
+        {{ auth()->user()->name }} ({{ auth()->user()->roles->pluck('nombre')->join(', ') }})
+    </span>
+</li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('inscripciones.index') }}">Mis Inscripciones</a>
+        </li>
+        <li class="nav-item">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="nav-link btn btn-link">Cerrar Sesión</button>
+            </form>
+        </li>
+    @endauth
+</ul>
         </div>
     </div>
 </nav>
