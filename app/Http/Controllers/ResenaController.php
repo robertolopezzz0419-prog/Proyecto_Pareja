@@ -19,7 +19,10 @@ class ResenaController extends Controller
         if (!Auth::user()->cursosInscritos()->where('curso_id', $curso->id)->exists()) {
             return back()->with('error', 'Debes estar inscrito para dejar una resena.');
         }
-
+       
+        if (Auth::user()->resenas()->where('curso_id', $curso->id)->exists()) {
+            return back()->with('error', 'Ya dejaste una reseña en este curso.');
+        }
         Resena::create([
             'user_id' => Auth::id(),
             'curso_id' => $curso->id,

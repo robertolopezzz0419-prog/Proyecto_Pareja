@@ -21,20 +21,18 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <h2>{{ $curso->titulo }}</h2>
-                 
-                    <a href="{{ route('cursos.edit', $curso->id) }}" class="btn btn-warning btn-sm">Editar curso</a>
+                                     @can('gestionar')
+                        <a href="{{ route('cursos.edit', $curso->id) }}" class="btn btn-warning btn-sm">Editar curso</a>
+                    @endcan
                 </div>
                 <p class="text-muted">Categoria: {{ $curso->categoria->nombre ?? 'Sin categoria' }}</p>
                 <p>{{ $curso->descripcion }}</p>
                 <h4 class="text-success">${{ $curso->precio }}</h4>
                 <p class="text-muted">{{ $curso->estudiantes->count() }} estudiantes inscritos</p>
 
-                @if($inscrito)
-                    <form action="{{ route('inscripciones.destroy', $curso->id) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-outline-danger">Salirme del curso</button>
-                    </form>
+                  @guest
+                    <a href="{{ route('login') }}" class="btn btn-success">Inicia sesión para inscribirte</a>
+                @elseif($inscrito)
                 @else
                     <form action="{{ route('inscripciones.store', $curso->id) }}" method="POST" class="d-inline">
                         @csrf
@@ -72,12 +70,14 @@
               <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
     <span><strong>Módulo {{ $modulo->orden }}:</strong> {{ $modulo->titulo }}</span>
 
-    <form action="{{ route('modulos.destroy', $modulo->id) }}" method="POST" class="m-0"
-          onsubmit="return confirm('¿Eliminar este módulo y todas sus lecciones?');">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-danger">Eliminar modulo</button>
-    </form>
+        @can('gestionar')
+        <form action="{{ route('modulos.destroy', $modulo->id) }}" method="POST" class="m-0"
+              onsubmit="return confirm('¿Eliminar este módulo y todas sus lecciones?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-sm btn-danger">Eliminar modulo</button>
+        </form>
+    @endcan
 </div>
                 <div class="card-body">
 
@@ -87,21 +87,28 @@
                                 <span>{{ $leccion->orden }}. {{ $leccion->titulo }}</span>
 
                              <div class="d-flex gap-1">
-    <a href="{{ route('lecciones.show', $leccion->id) }}" class="btn btn-sm btn-outline-success">Ver leccion</a>
-    <a href="{{ route('lecciones.edit', $leccion->id) }}" class="btn btn-sm btn-outline-warning">Editar</a>
-    <form action="{{ route('lecciones.destroy', $leccion->id) }}" method="POST" class="m-0"
-          onsubmit="return confirm('¿Eliminar esta leccion?');">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
-    </form>
+     @if($puedeEntrar)
+        <a href="{{ route('lecciones.show', $leccion->id) }}" class="btn btn-sm btn-outline-success">Ver leccion</a>
+    @else
+        <span class="text-muted small">Inscríbete para ver</span>
+    @endif
+
+    @can('gestionar')
+        <a href="{{ route('lecciones.edit', $leccion->id) }}" class="btn btn-sm btn-outline-warning">Editar</a>
+        <form action="{{ route('lecciones.destroy', $leccion->id) }}" method="POST" class="m-0"
+              onsubmit="return confirm('¿Eliminar esta leccion?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+        </form>
+    @endcan
 </div>
                             </li>
                         @empty
                             <li class="list-group-item text-muted">No hay lecciones registradas en este modulo todavia.</li>
                         @endforelse
                     </ul>
-
+                     @can('gestionar')
                     <div class="p-3 bg-light border rounded">
                         <small class="fw-bold text-secondary">Agregar leccion a este modulo:</small>
                         <form action="{{ route('lecciones.store') }}" method="POST" class="mt-2">
@@ -132,13 +139,13 @@
                             </div>
                         </form>
                     </div>
-
+                    @endcan
                 </div>
             </div>
         @empty
             <div class="alert alert-warning">No hay modulos registrados en este curso todavia.</div>
         @endforelse
-
+@can('gestionar')
         <div class="card mt-4 p-4 shadow-sm">
             <h4>Agregar Nuevo Modulo</h4>
             <form action="{{ route('modulos.store') }}" method="POST" class="mt-3">
@@ -161,7 +168,7 @@
                 <button type="submit" class="btn btn-primary">Guardar Modulo</button>
             </form>
         </div>
-
+        @endcan
        
         <h3 class="mt-5 mb-3">Reseñas</h3>
 

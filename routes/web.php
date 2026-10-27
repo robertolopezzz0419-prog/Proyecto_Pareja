@@ -14,17 +14,21 @@ Route::get('/', function () {
 });
 
 
-Route::resource('cursos', CursoController::class);
-Route::get('/categorias/crear', [CategoriaController::class, 'create'])->name('categorias.create');
-Route::post('/categorias', [CategoriaController::class, 'store'])->name('categorias.store');
-Route::post('/modulos', [ModuloController::class, 'store'])->name('modulos.store');
-Route::delete('/modulos/{id}', [ModuloController::class, 'destroy'])->name('modulos.destroy');
-Route::post('/lecciones', [LeccionController::class, 'store'])->name('lecciones.store');
-Route::get('/lecciones/{id}', [LeccionController::class, 'show'])->name('lecciones.show');
-Route::get('/lecciones/{id}/editar', [LeccionController::class, 'edit'])->name('lecciones.edit');
-Route::put('/lecciones/{id}', [LeccionController::class, 'update'])->name('lecciones.update');
-Route::delete('/lecciones/{id}', [LeccionController::class, 'destroy'])->name('lecciones.destroy');
-Route::post('/lecciones/{id}/completar', [LeccionController::class, 'alternarCompletada'])->name('lecciones.completar');
+
+Route::middleware(['auth', 'can:gestionar'])->group(function () {
+    Route::resource('cursos', CursoController::class)->except(['index', 'show']);
+    Route::get('/categorias/crear', [CategoriaController::class, 'create'])->name('categorias.create');
+    Route::post('/categorias', [CategoriaController::class, 'store'])->name('categorias.store');
+    Route::post('/modulos', [ModuloController::class, 'store'])->name('modulos.store');
+    Route::delete('/modulos/{id}', [ModuloController::class, 'destroy'])->name('modulos.destroy');
+    Route::post('/lecciones', [LeccionController::class, 'store'])->name('lecciones.store');
+    Route::get('/lecciones/{id}/editar', [LeccionController::class, 'edit'])->name('lecciones.edit');
+    Route::put('/lecciones/{id}', [LeccionController::class, 'update'])->name('lecciones.update');
+    Route::delete('/lecciones/{id}', [LeccionController::class, 'destroy'])->name('lecciones.destroy');
+});
+
+
+Route::resource('cursos', CursoController::class)->only(['index', 'show']);
 
 
 Route::middleware('guest')->group(function () {
@@ -35,10 +39,15 @@ Route::middleware('guest')->group(function () {
 });
 
 
+
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/mis-cursos', [InscripcionController::class, 'index'])->name('inscripciones.index');
     Route::post('/cursos/{curso}/inscribirse', [InscripcionController::class, 'store'])->name('inscripciones.store');
     Route::delete('/cursos/{curso}/inscribirse', [InscripcionController::class, 'destroy'])->name('inscripciones.destroy');
     Route::post('/cursos/{curso}/resenas', [ResenaController::class, 'store'])->name('resenas.store');
+
+
+    Route::get('/lecciones/{id}', [LeccionController::class, 'show'])->name('lecciones.show');
+    Route::post('/lecciones/{id}/completar', [LeccionController::class, 'alternarCompletada'])->name('lecciones.completar');
 });

@@ -5,20 +5,20 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
+                  <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('cursos.index') }}">Lista de Cursos</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('cursos.create') }}">Crear Curso</a>
-                </li>
-                @auth
-    @if(auth()->user()->roles->whereIn('nombre', ['Admin', 'Profesor'])->count() > 0)
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('categorias.create') }}">Crear Categoría</a>
-        </li>
-    @endif
-@endauthw
+
+                
+                @can('gestionar')
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('cursos.create') }}">Crear Curso</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('categorias.create') }}">Crear Categoría</a>
+                    </li>
+                @endcan
             </ul>
             <ul class="navbar-nav ms-auto">
     @guest
