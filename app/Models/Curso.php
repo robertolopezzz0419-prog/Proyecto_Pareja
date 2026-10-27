@@ -18,4 +18,14 @@ class Curso extends Model
     {
         return $this->hasMany(Modulo::class, 'curso_id')->orderBy('orden');
     }
+
+     public function estudiantes()
+    {
+        return $this->belongsToMany(User::class, 'curso_estudiante', 'curso_id', 'user_id')->withTimestamps();
+    }
+
+    public function resenas()
+    {
+        return $this->hasMany(Resena::class);
+    }
 }
