@@ -20,4 +20,14 @@ class Leccion extends Model
                     ->withPivot('completado')
                     ->withTimestamps();
     }
+    public function getVideoEmbedAttribute()
+{
+    $url = $this->video_url;
+
+    if (preg_match('~(?:youtube\.com/(?:watch\?v=|shorts/|embed/)|youtu\.be/)([A-Za-z0-9_-]{11})~', $url, $m)) {
+        return 'https://www.youtube.com/embed/' . $m[1];
+    }
+
+    return $url;
+}
 }

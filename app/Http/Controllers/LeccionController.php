@@ -14,7 +14,7 @@ class LeccionController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+     $datos = $request->validate([
             'titulo' => 'required|string|max:255',
             'contenido' => 'nullable|string',
             'video_url' => 'nullable|url',
@@ -52,6 +52,38 @@ class LeccionController extends Controller
             return view('lecciones.show', compact('leccion', 'curso', 'completadas', 'estaCompletada', 'progreso'));
     }
     
+
+    public function edit($id)
+{
+    $leccion = Leccion::with('modulo.curso')->findOrFail($id);
+    return view('lecciones.edit', compact('leccion'));
+}
+
+public function update(Request $request, $id)
+{
+    $leccion = Leccion::findOrFail($id);
+
+    $datos = $request->validate([
+        'titulo' => 'required|string|max:255',
+        'contenido' => 'nullable|string',
+        'video_url' => 'nullable|url',
+        'orden' => 'required|integer|min:1',
+    ]);
+
+    $leccion->update($datos);
+
+    return redirect()->route('cursos.show', $leccion->modulo->curso_id)->with('exito', 'Leccion actualizada.');
+}
+
+public function destroy($id)
+{
+    $leccion = Leccion::findOrFail($id);
+    $cursoId = $leccion->modulo->curso_id;
+
+    $leccion->delete();
+
+    return redirect()->route('cursos.show', $cursoId)->with('exito', 'Leccion eliminada.');
+}
 public function alternarCompletada(Request $request, $id)
 {
     $leccion = Leccion::findOrFail($id);
