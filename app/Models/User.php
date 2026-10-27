@@ -29,4 +29,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, 'rol_usuario', 'user_id', rol_id);
+    }
+
+    public function cursosInscritos()
+    {
+        return $this->belongsToMany(Curso::class, 'curso_estudiante', 'user_id', 'curso_id')->withTimestamps();
+    }
+
+    public function resenas()
+    {
+        return $this->hasMany(Resena::class);
+    }
 }
