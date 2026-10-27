@@ -11,12 +11,17 @@ class CursoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+      public function index(Request $request)
     {
-        $cursos = Curso::with('categoria')->get();
+        $cursos = Curso::with('categoria')
+            ->when($request->buscar, function ($query, $buscar) {
+                $query->where('titulo', 'like', "%{$buscar}%")
+                      ->orWhere('descripcion', 'like', "%{$buscar}%");
+            })
+            ->get();
+
         return view('cursos.index', compact('cursos'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -53,8 +58,9 @@ class CursoController extends Controller
      */
     public function show(string $id)
     {
-        $curso = Curso::with('categoria', 'modulos.lecciones')->findOrFail($id);
-        return view('cursos.show', compact('curso'));
+        $curso = Curso::with('categoria', 'modulos.lecciones', 'resenas.user')->findOrFail($id);
+        $inscrito = auth()->check() && auth()->user()->cursosInscritos()->where('cursos_id', $curso->id)->exists();
+        return view('cursos.show', compact('curso', 'inscrito'));
     }
 
     /**

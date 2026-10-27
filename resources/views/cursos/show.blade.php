@@ -24,7 +24,7 @@
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-muted disabled" href="#"> Mis Inscripciones (Compañero)</a>
+                        <a class="nav-link" href="{{ route('inscripciones.index')}}"> Mis Inscripciones (Compañero)</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-warning" href="#" onclick="alert('Módulo en desarrollo por tu compañero'); return false;">Iniciar Sesión</a>
@@ -47,6 +47,18 @@
                 <p class="text-muted">Categoría: {{ $curso->categoria->nombre ?? 'Sin categoría' }}</p>
                 <p>{{ $curso->descripcion }}</p>
                 <h4 class="text-success">${{ $curso->precio }}</h4>
+                                @if($inscrito)
+                    <form action="{{ route('inscripciones.destroy', $curso->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-outline-danger">Salirme del curso</button>
+                    </form>
+                @else
+                    <form action="{{ route('inscripciones.store', $curso->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button class="btn btn-success">Inscribirme a este curso</button>
+                    </form>
+                @endif
             </div>
         </div>
 
@@ -54,8 +66,16 @@
             <div class="alert alert-success">{{ session('exito') }}</div>
         @endif
 
+        @if (session('error'))
+        <div class="alert alert-danger">{{ session('error')}}</div>
+        @endif
+
+        @if (session('success'))
+        <div class="alert alert-success">{{ session('success')}}</div>
+        @endif
+
     
-        <h3 class="mb-3">Módulos del Curso</h3>
+        <h3 class="mb-3">Modulos del Curso</h3>
         
         @forelse($curso->modulos as $modulo)
             <div class="card mb-3 shadow-sm">
@@ -133,6 +153,42 @@
                 <button type="submit" class="btn btn-primary">Guardar Módulo</button>
             </form>
         </div>
+
+        <h3 class="mt-5 mb-3">Reseñas</h3>
+          @forelse($curso->resenas as $resena)
+          <div class="card mb-2 shadow-sm">
+            <div class="card-body">
+                <strong>{{ $resena->user->name }}</strong>
+                    <span class="text-warning">{{ str_repeat('★', $resena->calificacion) }}{{ str_repeat('☆', 5 - $resena->calificacion) }}</span>
+                    <p class="mb-0">{{ $resena->comentario }}</p>
+            </div>
+          </div>
+
+           @empty
+            <p class="text-muted">Aún no hay reseñas.</p>
+        @endforelse
+
+        @if (inscrito)
+        <div class="card mt-3 p-3 shadow-sm">
+              <form action="{{ route('resenas.store', $curso->id) }}" method="POST">
+                @csrf
+                <div class="mb-2">
+                    <label class="form-label">Calicacion</label>
+                    <select name="calicacion" class="form-select" required>
+                        <option value="5"> 5 estrellas</option>
+                        <option value="4">4 estrellas</option>
+                        <option value="3">3 estrellas</option>
+                        <option value="2">2 estrellas</option>
+                        <option value="1">1 estrellas</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <textarea name="comentario" class="form-control" rows="3" placeholder="Tu comentario"></textarea>
+                </div>
+                <button class="btn btn-primary">Enviar reseña</button>
+              </form>
+        </div>        
+        @endif
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
