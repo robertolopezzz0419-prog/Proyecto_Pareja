@@ -33,6 +33,12 @@ class User extends Authenticatable
     {
         return $this->roles->whereIn('nombre', ['Admin', 'Profesor'])->count() > 0;
     }
+
+    public function esEstudiante()
+    {
+        return $this->roles->where('nombre', 'Estudiante')->count() > 0;
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Rol::class, 'rol_usuario', 'user_id', 'rol_id');

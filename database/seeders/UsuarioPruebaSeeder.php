@@ -14,6 +14,7 @@ class UsuarioPruebaSeeder extends Seeder
         $this->crearUsuario('Admin Prueba', 'admin@lms.com', 'Admin');
         $this->crearUsuario('Profesor Prueba', 'profesor@lms.com', 'Profesor');
         $this->crearUsuario('Estudiante Prueba', 'estudiante@lms.com', 'Estudiante');
+        $this->crearUsuario('Nombre del Profesor', 'juan@gmail.com', 'Profesor');
     }
 
     private function crearUsuario($nombre, $correo, $nombreRol)

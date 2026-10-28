@@ -16,6 +16,9 @@ class AuthController extends Controller
 
     public function registrar(Request $request)
     {
+        // Normaliza el correo para que A@x.com y a@x.com cuenten como el mismo.
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
+
         $datos = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
@@ -29,11 +32,13 @@ class AuthController extends Controller
             'password.min' => 'La contraseña debe tener mínimo 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
+
         $user = User::create($datos);
-         $rolEstudiante = Rol::where('nombre', 'Estudiante')->first();
-        if ($rolEstudiante) {
-            $user->roles()->attach($rolEstudiante->id);
-        }
+
+        // El registro público siempre crea alumnos.
+        // Los profesores se dan de alta desde el seeder (UsuarioPruebaSeeder).
+        $rolEstudiante = Rol::firstOrCreate(['nombre' => 'Estudiante']);
+        $user->roles()->attach($rolEstudiante->id);
 
         Auth::login($user);
         $request->session()->regenerate();

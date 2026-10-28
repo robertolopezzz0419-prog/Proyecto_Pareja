@@ -19,6 +19,9 @@ Route::middleware(['auth', 'can:gestionar'])->group(function () {
     Route::resource('cursos', CursoController::class)->except(['index', 'show']);
     Route::get('/categorias/crear', [CategoriaController::class, 'create'])->name('categorias.create');
     Route::post('/categorias', [CategoriaController::class, 'store'])->name('categorias.store');
+    Route::get('/categorias/{categoria}/editar', [CategoriaController::class, 'edit'])->name('categorias.edit');
+    Route::put('/categorias/{categoria}', [CategoriaController::class, 'update'])->name('categorias.update');
+    Route::delete('/categorias/{categoria}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
     Route::post('/modulos', [ModuloController::class, 'store'])->name('modulos.store');
     Route::delete('/modulos/{id}', [ModuloController::class, 'destroy'])->name('modulos.destroy');
     Route::post('/lecciones', [LeccionController::class, 'store'])->name('lecciones.store');
@@ -46,6 +49,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/cursos/{curso}/inscribirse', [InscripcionController::class, 'store'])->name('inscripciones.store');
     Route::delete('/cursos/{curso}/inscribirse', [InscripcionController::class, 'destroy'])->name('inscripciones.destroy');
     Route::post('/cursos/{curso}/resenas', [ResenaController::class, 'store'])->name('resenas.store');
+    Route::get('/resenas/{resena}/editar', [ResenaController::class, 'edit'])->name('resenas.edit');
+    Route::put('/resenas/{resena}', [ResenaController::class, 'update'])->name('resenas.update');
+    Route::delete('/resenas/{resena}', [ResenaController::class, 'destroy'])->name('resenas.destroy');
 
 
     Route::get('/lecciones/{id}', [LeccionController::class, 'show'])->name('lecciones.show');
