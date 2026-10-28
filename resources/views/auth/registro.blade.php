@@ -9,7 +9,7 @@
     @include('partials.navbar')
     <div class="container" style="max-width: 480px;">
         <div class="card shadow-sm p-4">
-            <h3 class="mb-3">Crear cuenta</h3>
+            <h3 class="mb-3">Crear cuenta de alumno</h3>
             <form action="{{ route('registro.store') }}" method="POST">
                 @csrf
                 <div class="mb-3">

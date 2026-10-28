@@ -183,8 +183,31 @@
         @forelse($curso->resenas as $resena)
             <div class="card mb-2 shadow-sm">
                 <div class="card-body">
-                    <strong>{{ $resena->user->name }}</strong>
-                    <span class="text-warning">{{ str_repeat('★', $resena->calificacion) }}{{ str_repeat('☆', 5 - $resena->calificacion) }}</span>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>{{ $resena->user->name }}</strong>
+                            <span class="text-warning">{{ str_repeat('★', $resena->calificacion) }}{{ str_repeat('☆', 5 - $resena->calificacion) }}</span>
+                        </div>
+
+                        @auth
+                            @php
+                                $esAutor = auth()->user()->esEstudiante() && $resena->user_id === auth()->id();
+                            @endphp
+                            @if($esAutor || auth()->user()->puedeGestionar())
+                                <div class="d-flex gap-1">
+                                    @if($esAutor)
+                                        <a href="{{ route('resenas.edit', $resena->id) }}" class="btn btn-sm btn-outline-warning">Editar</a>
+                                    @endif
+                                    <form action="{{ route('resenas.destroy', $resena->id) }}" method="POST" class="m-0"
+                                          onsubmit="return confirm('¿Eliminar esta reseña?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                    </form>
+                                </div>
+                            @endif
+                        @endauth
+                    </div>
                     <p class="mb-0">{{ $resena->comentario }}</p>
                 </div>
             </div>
@@ -192,7 +215,7 @@
             <p class="text-muted">Aún no hay reseñas.</p>
         @endforelse
 
-        @if($inscrito && !$curso->resenas->where('user_id', auth()->id())->count())
+        @if($inscrito && auth()->user()->esEstudiante() && !$curso->resenas->where('user_id', auth()->id())->count())
             <div class="card mt-3 p-3 shadow-sm">
                 <h5>Deja tu reseña</h5>
                 <form action="{{ route('resenas.store', $curso->id) }}" method="POST">

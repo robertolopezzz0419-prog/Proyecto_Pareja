@@ -18,6 +18,10 @@
                     <div class="alert alert-success">{{ session('exito') }}</div>
                 @endif
 
+                @if(session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -45,7 +49,21 @@
                     <h5>Categorías existentes</h5>
                     <ul class="list-group mt-2">
                         @forelse($categorias as $categoria)
-                            <li class="list-group-item">{{ $categoria->nombre }}</li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    {{ $categoria->nombre }}
+                                    <small class="text-muted">({{ $categoria->cursos_count }} cursos)</small>
+                                </span>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ route('categorias.edit', $categoria->id) }}" class="btn btn-sm btn-outline-warning">Editar</a>
+                                    <form action="{{ route('categorias.destroy', $categoria->id) }}" method="POST" class="m-0"
+                                          onsubmit="return confirm('¿Eliminar la categoría {{ addslashes($categoria->nombre) }}?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                    </form>
+                                </div>
+                            </li>
                         @empty
                             <li class="list-group-item text-muted">Aún no hay categorías.</li>
                         @endforelse
